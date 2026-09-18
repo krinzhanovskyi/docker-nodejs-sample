@@ -1,48 +1,199 @@
-# **Thema:** Erstellen einer ToDo-Applikation mit Markdown, Git, GitHub und Docker
+﻿# To-Do-App with Node.js, Express und Docker
 
-In dieser Abschlussaufgabe werden alle erlernten Fähigkeiten in den Bereichen **Markdown**, **Git**, **GitHub** und **Docker** kombiniert. Die Aufgabe besteht darin, eine ToDo-Applikation zu erstellen und diese in einem Docker-Container bereitzustellen.
+This project is a small web application for managing to-do tasks. The app runs with Node.js and Express and uses either SQLite as database. The application can be run locally or launched in a Docker container.
 
-### **Aufgabenstellung:**
+## Overview
 
-1. **GitHub-Fork erstellen:**
-   - Erstelle einen **Fork** des folgenden GitHub-Repositories: [docker-nodejs-sample](https://github.com/ICT-BLJ/docker-nodejs-sample).
-   - Clone deinen Fork lokal auf deinen Computer.
+-   Backend: Node.js + Express
+-   Frontend: simple HTML/JavaScript interface in the `src/static` folder
+-   Database: SQLite by default, PostgreSQL optional
+-   Tests: Jest
+-   Containerisation: Docker Windows
 
-2. **Erstellen einer README-Datei in Markdown:**
-   - Erstelle eine **README.md** Datei im Root-Verzeichnis des Projekts.
-   - Die README soll alle Schritte zur **Installation des Projekts** enthalten. Dazu gehören:
-     - Klonen des Repositories
-     - Installation der notwendigen Pakete
-     - Docker-Konfiguration und -Installation
-     - Starten der Applikation in einem Docker-Container
-   - Nutze [Markdown](https://www.markdownguide.org/cheat-sheet/) für die Struktur und Formatierung der Datei.
+## Prerequisites
 
-3. **Dokumentation der Vorgehensweise:**
-   - Verfasse eine vollständige **Dokumentation in Word**, in der die Arbeitsschritte beschrieben werden. Diese Schritte sind:
-     - Klonen des Repositories
-     - Einrichtung der Entwicklungsumgebung
-     - Erstellung der README.md
-     - Verwendung von Git (Commit, Push)
-     - Erstellung und Nutzung von Docker-Containern
-   - Verwende die während des Office-Kurses erarbeiteten Kenntnisse für das Erstellen dieses Dokuments.
+Before you start the project, make sure the following tools are installed on your computer:
 
-4. **Dockerize das Node.js-Projekt:**
-   - Verfolge die Anleitung unter [docs.docker.com](https://docs.docker.com/guides/language/nodejs/containerize/) ab dem Schritt **"Initialize Docker assets"**.
-   - Dein Ziel ist es, das Projekt in einem Docker-Container lauffähig zu machen, sodass am Ende eine **ToDo-Applikation** in einem Docker-Container bereitsteht.
+-   Git
+-   Node.js
+-   npm
+-   Docker Desktop
 
-5. **Git-Workflows:**
-   - Arbeite mit **Git**, um Änderungen regelmäßig zu committen und auf GitHub zu pushen.
-   - Verwende sinnvolle Commit-Nachrichten, um deinen Fortschritt zu dokumentieren.
-   - Stelle sicher, dass dein finaler Stand auf GitHub vorhanden ist.
+Check the installation with:
 
-6. **Abgabe:**
-   - **Dokumentation:** Lade die erstellte Word-Dokumentation (inkl. Screenshots und Beschreibung der Schritte) in dein Repository hoch.
-   - **GitHub-Link:** Stelle den Link zu deinem GitHub-Repository bereit, das den finalen Stand des Projekts enthält.
+```bash
+git --version
+node --version
+npm --version
+docker --version
+```
 
-### **Ziele der Aufgabe:**
-- Anwendung und Vertiefung von Git und GitHub.
-- Verfassen einer strukturierten Anleitung mit Markdown.
-- Containerisieren einer Node.js-Anwendung mit Docker.
-- Dokumentation des gesamten Prozesses in einem Word-Dokument.
-  
-Viel Erfolg bei der Umsetzung!
+## Clon repository
+
+```bash
+git clone <your-github-repository-url>
+cd docker-nodejs-sample
+```
+
+## Installing dependencies
+
+Run the following in the project folder:
+
+```bash
+npm install
+```
+
+This will install all the packages defined in `package.json`, including:
+
+-   `express`
+-   `sqlite3`
+-   `pg`
+-   `uuid`
+-   `jest`
+-   `nodemon`
+
+```bash
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+## Launching the application on locall server
+
+The launch command is defined in the project:
+
+```bash
+npm start
+```
+
+The application can then usually be accessed at the following address:
+
+```text
+http://localhost:3000
+```
+
+## Running tests
+
+```bash
+npm test -- runInBand
+```
+
+## Database PoSQL and SQL
+
+The project automatically detects whether PostgreSQL is configured:
+
+-   If the environment variable `POSTGRES_HOST` is set, PostgreSQL is used.
+-   Otherwise, SQLite is used.
+-   You can work as you want.
+
+## Using Docker
+
+For the app to run in a container, a Dockerfile must be present in the project directory. The application can then be built and started using the following commands:
+
+### Build the image
+
+```bash
+docker build -t docker-nodejs-sample .
+```
+
+### Start the container
+
+```bash
+docker run -d -p 3000:3000 --name todo-app docker-nodejs-sample
+```
+
+The application is then available again at:
+
+```text
+http://localhost:3000
+```
+
+### Stop the container
+
+```bash
+docker stop todo-app
+```
+
+### Remove the container
+
+```bash
+docker rm todo-app
+```
+
+## Project structure
+
+```text
+docker-nodejs-sample/
+├── node_modules/
+├── spec/
+│   ├── persistence/
+│   │   └── sqlite.spec.js
+│   └── routes/
+│       ├── addItem.spec.js
+│       ├── deleteItem.spec.js
+│       ├── getItems.spec.js
+│       └── updateItem.spec.js
+├── src/
+│   ├── persistence/
+│   │   ├── index.js
+│   │   ├── postgres.js
+│   │   └── sqlite.js
+│   ├── routes/
+│   │   ├── addItem.js
+│   │   ├── deleteItem.js
+│   │   ├── getItems.js
+│   │   └── updateItem.js
+│   ├── static/
+│   └── index.js
+├── .gitignore
+├── package-lock.json
+├── package.json
+└── README.md
+```
+
+## API endpoints
+
+The application provides the following HTTP endpoints:
+
+-   `GET /items` – retrieve all entries
+-   `POST /items` – create a new entry
+-   `PUT /items/:id` – update an entry
+-   `DELETE /items/:id` – delete an entry
+
+## Git workflow
+
+It is advisable to follow a sensible workflow when working on the project:
+
+```bash
+git status
+git add .
+git commit -m ‘FULLY Description of your change’
+git push origin main
+```
+
+If you are working with a fork, you should push to your own repository.
+
+## Common problems
+
+### 1. "npm" or "node" cannot be found
+
+If the console reports that "npm" cannot be found, Node.js is either not installed or is not available in the PATH. Check again as follows:
+
+```bash
+node -v
+npm -v
+```
+
+### 2. App does not start on port 3000
+
+Check whether another service is already using port 3000. If necessary, change the port in the src/index.js on another one.
+
+### 3. Docker is not running
+
+Make sure that you have WSL and the Docker Desktop is active.
+
+## Licence
+
+This project is licensed under the MIT Licence. The full licence details can be found in `package.json`.
+
+## End
+
+This project serves as a good example of a complete full-stack application using Node.js, Express, database abstraction and Docker containerisation. Thanks to the combination of local development, Git and container setup, it is also well suited as a learning project for application development. Thanks for using.
